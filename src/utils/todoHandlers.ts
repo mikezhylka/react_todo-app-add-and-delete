@@ -44,6 +44,12 @@ export function useAddTodo() {
   };
 
   async function addTodo() {
+    if (!query.trim()) {
+      setError('Title should not be empty');
+
+      return;
+    }
+
     try {
       const createdTodo = await todoService.createTodo(newTodo);
 
@@ -62,16 +68,13 @@ export function useAddTodo() {
   return addTodo;
 }
 
-export function useRenameTodo() {
-  const {
-    todoQuery,
-    setTodoQuery,
-    setTodos,
-    setError,
-    setIsNewTodoFieldEdited,
-    setLoadingTodos,
-    setIsTodoEdited,
-  } = useAppContext();
+export function useRenameTodo(
+  todoQuery: string,
+  setTodoQuery: React.Dispatch<SetStateAction<string>>,
+  setIsTodoEdited: React.Dispatch<SetStateAction<boolean>>,
+) {
+  const { setTodos, setError, setIsNewTodoFieldEdited, setLoadingTodos } =
+    useAppContext();
 
   const isInputEmpty = !todoQuery.trim();
 
@@ -200,14 +203,8 @@ export function useToggleAllTodosCompletion() {
 }
 
 export function useRemoveCompletedTodos() {
-  const {
-    todos,
-    setLoadingTodos,
-    setError,
-    inputRef,
-    setTodos,
-    setIsClearButtonDisabled,
-  } = useAppContext();
+  const { todos, setLoadingTodos, setError, inputRef, setTodos } =
+    useAppContext();
 
   async function removeCompletedTodos() {
     try {
@@ -222,7 +219,6 @@ export function useRemoveCompletedTodos() {
           try {
             await todoService.deleteTodo(todo.id);
           } catch (error) {
-            setIsClearButtonDisabled(false);
             setError('Unable to delete a todo');
           } finally {
             setLoadingTodos(prev =>

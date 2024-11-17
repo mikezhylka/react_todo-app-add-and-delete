@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import classNames from 'classnames';
-import React, { useEffect } from 'react';
+import React, { useState } from 'react';
 import { useAppContext } from '../../../context/AppContext';
 import { Todo, Todo as TodoType } from '../../../types/Todo';
 import {
@@ -14,16 +14,12 @@ type Props = {
 };
 
 export const TodoItem: React.FC<Props> = ({ todo }) => {
-  const context = useAppContext();
-  const { loadingTodos, isTodoEdited, setIsTodoEdited } = context;
-  const { setTodoQuery, todoQuery } = useAppContext();
-
-  useEffect(() => {
-    setTodoQuery(todo.title);
-  }, []);
+  const { loadingTodos } = useAppContext();
+  const [isTodoEdited, setIsTodoEdited] = useState(false);
+  const [todoQuery, setTodoQuery] = useState(todo.title);
 
   const removeTodo = useRemoveTodo();
-  const renameTodo = useRenameTodo();
+  const renameTodo = useRenameTodo(todoQuery, setTodoQuery, setIsTodoEdited);
   const toggleTodoCompletion = useToggleTodoCompletion();
 
   function handleRemove(todoId: number) {
@@ -60,12 +56,7 @@ export const TodoItem: React.FC<Props> = ({ todo }) => {
       </label>
 
       {isTodoEdited ? (
-        <form
-          name="todoForm"
-          onSubmit={e => {
-            e.preventDefault();
-          }}
-        >
+        <form name="todoForm" onSubmit={e => e.preventDefault()}>
           <input
             data-cy="NewTodoField"
             type="text"
@@ -73,7 +64,7 @@ export const TodoItem: React.FC<Props> = ({ todo }) => {
             value={todoQuery}
             onKeyDown={e => handleRename(todo, e)}
             onBlur={() => setIsTodoEdited(false)}
-            onChange={event => setTodoQuery(event.target.value)}
+            onChange={e => setTodoQuery(e.target.value)}
             autoFocus
           />
         </form>

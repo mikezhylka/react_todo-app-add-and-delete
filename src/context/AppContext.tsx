@@ -9,8 +9,6 @@ interface AppContextProps {
   setTodos: React.Dispatch<React.SetStateAction<Todo[]>>;
   query: string;
   setQuery: React.Dispatch<React.SetStateAction<string>>;
-  todoQuery: string;
-  setTodoQuery: React.Dispatch<React.SetStateAction<string>>;
   error: CustomError;
   setError: React.Dispatch<React.SetStateAction<CustomError>>;
   filter: Filter;
@@ -20,12 +18,8 @@ interface AppContextProps {
   inputRef: React.MutableRefObject<HTMLInputElement | null>;
   isFormDisabled: boolean;
   setIsFormDisabled: React.Dispatch<React.SetStateAction<boolean>>;
-  isClearButtonDisabled: boolean;
-  setIsClearButtonDisabled: React.Dispatch<React.SetStateAction<boolean>>;
   isNewTodoFieldEdited: boolean;
   setIsNewTodoFieldEdited: React.Dispatch<React.SetStateAction<boolean>>;
-  isTodoEdited: boolean;
-  setIsTodoEdited: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const AppContext = createContext<AppContextProps | undefined>(undefined);
@@ -33,14 +27,11 @@ export const AppContext = createContext<AppContextProps | undefined>(undefined);
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [query, setQuery] = useState(''); // for new todo title
-  const [todoQuery, setTodoQuery] = useState(''); // used while renaming todo
   const [error, setError] = useState<CustomError>('');
   const [filter, setFilter] = useState<Filter>('all');
   const [loadingTodos, setLoadingTodos] = useState<LoadingTodo[]>([]);
   const [isFormDisabled, setIsFormDisabled] = useState(false);
-  const [isClearButtonDisabled, setIsClearButtonDisabled] = useState(false);
   const [isNewTodoFieldEdited, setIsNewTodoFieldEdited] = useState(false);
-  const [isTodoEdited, setIsTodoEdited] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   return (
@@ -50,8 +41,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         setTodos,
         query,
         setQuery,
-        todoQuery,
-        setTodoQuery,
         error,
         setError,
         filter,
@@ -61,12 +50,8 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         inputRef,
         isFormDisabled,
         setIsFormDisabled,
-        isClearButtonDisabled,
-        setIsClearButtonDisabled,
         isNewTodoFieldEdited,
         setIsNewTodoFieldEdited,
-        isTodoEdited,
-        setIsTodoEdited,
       }}
     >
       {children}

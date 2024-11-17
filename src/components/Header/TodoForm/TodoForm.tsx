@@ -4,7 +4,7 @@ import { useAddTodo } from '../../../utils/todoHandlers';
 
 export const TodoForm: React.FC = () => {
   const context = useAppContext();
-  const { query, setQuery, isFormDisabled, inputRef, setError } = context;
+  const { query, setQuery, isFormDisabled, inputRef } = context;
   const addTodo = useAddTodo();
 
   function handleAddingTodo() {
@@ -17,21 +17,11 @@ export const TodoForm: React.FC = () => {
     }
   }, [inputRef, isFormDisabled]);
 
-  function handleSubmit(event: React.FormEvent) {
-    event.preventDefault();
-
-    if (!query.trim()) {
-      setError('Title should not be empty');
-
-      return;
-    }
-  }
-
   return (
     <form
       name="todoForm"
       onSubmit={event => {
-        handleSubmit(event);
+        event.preventDefault();
         handleAddingTodo();
       }}
     >

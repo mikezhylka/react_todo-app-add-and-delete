@@ -1,13 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { useAppContext } from '../../context/AppContext';
 import { useRemoveCompletedTodos } from '../../utils/todoHandlers';
 import { Filter } from './Filter/Filter';
 
 export const FilteringPanel: React.FC = () => {
-  const context = useAppContext();
-  const { isClearButtonDisabled, setIsClearButtonDisabled, todos } = context;
+  const { todos } = useAppContext();
+  const [isDisabledClearButton, setIsDisabledClearButton] = useState(true);
+
   const removeCompletedTodos = useRemoveCompletedTodos();
 
   function handleRemoveCompletedTodos() {
@@ -15,9 +16,7 @@ export const FilteringPanel: React.FC = () => {
   }
 
   useEffect(() => {
-    if (!todos.find(todo => todo.completed)) {
-      setIsClearButtonDisabled(true);
-    }
+    setIsDisabledClearButton(!todos.some(todo => todo.completed));
   }, [todos]);
 
   return (
@@ -31,8 +30,8 @@ export const FilteringPanel: React.FC = () => {
       <button
         type="button"
         className="todoapp__clear-completed"
-        disabled={isClearButtonDisabled}
         data-cy="ClearCompletedButton"
+        disabled={isDisabledClearButton}
         onClick={() => handleRemoveCompletedTodos()}
       >
         Clear completed
