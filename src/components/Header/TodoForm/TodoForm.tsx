@@ -1,48 +1,40 @@
-import React, { SetStateAction, useEffect, useRef, useState } from 'react';
-import { CustomError } from '../../../types/Error';
-import { LoadingTodo } from '../../../types/LoadingTodo';
-import { Todo } from '../../../types/Todo';
-import { onEnterAddTodo } from '../../../utils/todoHandlers';
+import React, { useEffect } from 'react';
+import { useAppContext } from '../../../context/AppContext';
+import { useAddTodo } from '../../../utils/todoHandlers';
 
-type TodoFormProps = {
-  query: string;
-  setQuery: React.Dispatch<SetStateAction<string>>;
-  setTodos: React.Dispatch<SetStateAction<Todo[]>>;
-  setErrorMessage: React.Dispatch<SetStateAction<CustomError>>;
-  setLoadingTodo: React.Dispatch<SetStateAction<LoadingTodo>>;
-};
+export const TodoForm: React.FC = () => {
+  const context = useAppContext();
+  const { query, setQuery, isFormDisabled, inputRef, setError } = context;
+  const addTodo = useAddTodo();
 
-export const TodoForm: React.FC<TodoFormProps> = ({
-  query,
-  setQuery,
-  setTodos,
-  setErrorMessage,
-  setLoadingTodo,
-}) => {
-  const [isDisabled, setIsDisabled] = useState<boolean>(false);
-  const inputRef = useRef<HTMLInputElement | null>(null);
-
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
-
-    onEnterAddTodo(
-      query,
-      setQuery,
-      setTodos,
-      setErrorMessage,
-      setLoadingTodo,
-      setIsDisabled,
-    );
-  };
+  function handleAddingTodo() {
+    addTodo();
+  }
 
   useEffect(() => {
-    if (inputRef.current) {
+    if (!isFormDisabled && inputRef.current) {
       inputRef.current.focus();
     }
-  }, [query]);
+  }, [inputRef, isFormDisabled]);
+
+  function handleSubmit(event: React.FormEvent) {
+    event.preventDefault();
+
+    if (!query.trim()) {
+      setError('Title should not be empty');
+
+      return;
+    }
+  }
 
   return (
-    <form name="todoForm" onSubmit={event => handleSubmit(event)}>
+    <form
+      name="todoForm"
+      onSubmit={event => {
+        handleSubmit(event);
+        handleAddingTodo();
+      }}
+    >
       <input
         data-cy="NewTodoField"
         type="text"
@@ -52,7 +44,7 @@ export const TodoForm: React.FC<TodoFormProps> = ({
         value={query}
         onChange={event => setQuery(event.target.value)}
         autoFocus
-        disabled={isDisabled}
+        disabled={isFormDisabled}
       />
     </form>
   );
