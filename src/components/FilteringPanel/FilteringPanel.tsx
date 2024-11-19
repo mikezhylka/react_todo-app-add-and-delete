@@ -8,21 +8,27 @@ import { Filter } from './Filter/Filter';
 export const FilteringPanel: React.FC = () => {
   const { todos } = useAppContext();
   const [isDisabledClearButton, setIsDisabledClearButton] = useState(true);
+  const [removalError, setRemovalError] = useState(false);
+  const notCompletedTodosLength = todos.filter(
+    todo => !todo.completed && todo.id !== 0,
+  ).length;
 
   const removeCompletedTodos = useRemoveCompletedTodos();
 
   function handleRemoveCompletedTodos() {
-    removeCompletedTodos();
+    removeCompletedTodos(setRemovalError);
   }
 
   useEffect(() => {
-    setIsDisabledClearButton(!todos.some(todo => todo.completed));
+    setIsDisabledClearButton(
+      !todos.some(todo => todo.completed) && !removalError,
+    );
   }, [todos]);
 
   return (
     <footer className="todoapp__filtering-panel" data-cy="Footer">
       <span className="todo-count" data-cy="TodosCounter">
-        {todos.filter(todo => !todo.completed).length} items left
+        {notCompletedTodosLength} items left
       </span>
 
       <Filter />
@@ -32,7 +38,7 @@ export const FilteringPanel: React.FC = () => {
         className="todoapp__clear-completed"
         data-cy="ClearCompletedButton"
         disabled={isDisabledClearButton}
-        onClick={() => handleRemoveCompletedTodos()}
+        onClick={handleRemoveCompletedTodos}
       >
         Clear completed
       </button>

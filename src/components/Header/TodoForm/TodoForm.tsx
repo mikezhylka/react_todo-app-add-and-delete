@@ -3,12 +3,15 @@ import { useAppContext } from '../../../context/AppContext';
 import { useAddTodo } from '../../../utils/todoHandlers';
 
 export const TodoForm: React.FC = () => {
-  const context = useAppContext();
-  const { query, setQuery, isFormDisabled, inputRef } = context;
+  const { query, setQuery, isFormDisabled, inputRef } = useAppContext();
   const addTodo = useAddTodo();
 
   function handleAddingTodo() {
     addTodo();
+  }
+
+  function handleQueryChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setQuery(event.target.value);
   }
 
   useEffect(() => {
@@ -32,7 +35,7 @@ export const TodoForm: React.FC = () => {
         ref={inputRef}
         placeholder="What needs to be done?"
         value={query}
-        onChange={event => setQuery(event.target.value)}
+        onChange={event => handleQueryChange(event)}
         autoFocus
         disabled={isFormDisabled}
       />

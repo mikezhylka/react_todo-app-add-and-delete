@@ -11,7 +11,7 @@ function showSpinner(setState: React.Dispatch<SetStateAction<LoadingTodo[]>>) {
 }
 
 export function useRemoveTodo() {
-  const { setTodos, setLoadingTodos, setError } = useAppContext();
+  const { setTodos, setLoadingTodos, setError, inputRef } = useAppContext();
 
   async function removeTodo(todoId: number) {
     try {
@@ -21,6 +21,8 @@ export function useRemoveTodo() {
       setTodos(prevTodos => prevTodos.filter(item => item.id !== todoId));
     } catch (error) {
       setError('Unable to delete a todo');
+    } finally {
+      return inputRef.current && inputRef.current.focus();
     }
   }
 
@@ -37,11 +39,26 @@ export function useAddTodo() {
     setTodos,
   } = useAppContext();
 
+  const tempTodo: Todo = {
+    id: 0,
+    userId: USER_ID,
+    title: '',
+    completed: false,
+  };
+
   const newTodo: Omit<Todo, 'id'> = {
     userId: USER_ID,
     title: query.trim(),
     completed: false,
   };
+
+  async function addTempTodo() {
+    tempTodo.title = query;
+
+    await setTodos(prev => [...prev, tempTodo]);
+    await setLoadingTodos([{ id: tempTodo.id, action: 'adding' }]);
+    await showSpinner(setLoadingTodos);
+  }
 
   async function addTodo() {
     if (!query.trim()) {
@@ -51,15 +68,23 @@ export function useAddTodo() {
     }
 
     try {
+      setIsFormDisabled(true);
+      addTempTodo();
+
       const createdTodo = await todoService.createTodo(newTodo);
 
-      setIsFormDisabled(true);
+      await setLoadingTodos([]); // reset loading state after tempTodo
+
+      setTodos(prev => [
+        ...prev.filter(todo => todo !== tempTodo),
+        createdTodo,
+      ]);
+
       setLoadingTodos([{ id: createdTodo.id, action: 'adding' }]);
-      showSpinner(setLoadingTodos);
-      setTodos(prevTodos => [...prevTodos, createdTodo]);
       setQuery('');
     } catch (error) {
       setError('Unable to add a todo');
+      setTodos(prev => [...prev.filter(todo => todo !== tempTodo)]);
     } finally {
       setIsFormDisabled(false);
     }
@@ -206,7 +231,9 @@ export function useRemoveCompletedTodos() {
   const { todos, setLoadingTodos, setError, inputRef, setTodos } =
     useAppContext();
 
-  async function removeCompletedTodos() {
+  async function removeCompletedTodos(
+    setRemovalError: React.Dispatch<SetStateAction<boolean>>,
+  ) {
     try {
       const completedTodos = todos.filter(todo => todo.completed);
 
@@ -218,19 +245,17 @@ export function useRemoveCompletedTodos() {
           ]);
           try {
             await todoService.deleteTodo(todo.id);
+            await setTodos(prev => prev.filter(item => item.id !== todo.id));
           } catch (error) {
+            setRemovalError(true);
             setError('Unable to delete a todo');
           } finally {
-            setLoadingTodos(prev =>
-              prev.filter(loadingTodo => loadingTodo?.id !== todo.id),
-            );
+            setLoadingTodos(prev => prev.filter(item => item?.id !== todo.id));
 
             return inputRef.current && inputRef.current.focus();
           }
         }),
       );
-
-      setTodos(prevTodos => prevTodos.filter(todo => !todo.completed));
     } catch (error) {
       setError('Unable to delete a todo');
       setLoadingTodos([]);

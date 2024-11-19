@@ -18,13 +18,9 @@ export const TodoItem: React.FC<Props> = ({ todo }) => {
   const [isTodoEdited, setIsTodoEdited] = useState(false);
   const [todoQuery, setTodoQuery] = useState(todo.title);
 
-  const removeTodo = useRemoveTodo();
   const renameTodo = useRenameTodo(todoQuery, setTodoQuery, setIsTodoEdited);
   const toggleTodoCompletion = useToggleTodoCompletion();
-
-  function handleRemove(todoId: number) {
-    removeTodo(todoId);
-  }
+  const removeTodo = useRemoveTodo();
 
   function handleRename(currentTodo: Todo, e: React.KeyboardEvent) {
     renameTodo(currentTodo, e);
@@ -32,6 +28,10 @@ export const TodoItem: React.FC<Props> = ({ todo }) => {
 
   function handleToggleTodoCompletion(id: number) {
     toggleTodoCompletion(id);
+  }
+
+  function handleRemove(todoId: number) {
+    removeTodo(todoId);
   }
 
   return (
