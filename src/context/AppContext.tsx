@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useRef, useState } from 'react';
+
 import { CustomError } from '../types/Error';
-import { Filter } from '../types/Filter';
+import { FilterValues } from '../types/FilterValues';
 import { LoadingTodo } from '../types/LoadingTodo';
 import { Todo } from '../types/Todo';
 
@@ -11,8 +12,8 @@ interface AppContextProps {
   setQuery: React.Dispatch<React.SetStateAction<string>>;
   error: CustomError;
   setError: React.Dispatch<React.SetStateAction<CustomError>>;
-  filter: Filter;
-  setFilter: React.Dispatch<React.SetStateAction<Filter>>;
+  filter: FilterValues;
+  setFilter: React.Dispatch<React.SetStateAction<FilterValues>>;
   loadingTodos: LoadingTodo[];
   setLoadingTodos: React.Dispatch<React.SetStateAction<LoadingTodo[]>>;
   inputRef: React.MutableRefObject<HTMLInputElement | null>;
@@ -28,7 +29,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [query, setQuery] = useState(''); // for new todo title
   const [error, setError] = useState<CustomError>('');
-  const [filter, setFilter] = useState<Filter>('all');
+  const [filter, setFilter] = useState<FilterValues>(FilterValues.All);
   const [loadingTodos, setLoadingTodos] = useState<LoadingTodo[]>([]);
   const [isFormDisabled, setIsFormDisabled] = useState(false);
   const [isNewTodoFieldEdited, setIsNewTodoFieldEdited] = useState(false);

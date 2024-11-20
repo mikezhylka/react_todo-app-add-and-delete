@@ -1,7 +1,10 @@
 import classNames from 'classnames';
 import React from 'react';
+
 import { useAppContext } from '../../context/AppContext';
+
 import { useToggleAllTodosCompletion } from '../../utils/todoHandlers';
+
 import { TodoForm } from './TodoForm';
 
 export const Header: React.FC = () => {

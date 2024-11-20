@@ -1,7 +1,8 @@
 import classNames from 'classnames';
 import React from 'react';
+
 import { useAppContext } from '../../../context/AppContext';
-import { Filter as FilterType } from '../../../types/Filter';
+
 import { FilterValues } from '../../../types/FilterValues';
 
 function capitalize(str: string) {
@@ -21,13 +22,13 @@ export const Filter: React.FC = () => {
         return (
           <a
             key={value}
-            href={value === 'ALL' ? '#/' : `#/${lowerCasedValue}`}
+            href={value === 'all' ? '#/' : `#/${lowerCasedValue}`}
             className={classNames('filter__link', {
               selected: filter === lowerCasedValue,
             })}
             data-cy={`FilterLink${capitalizedValue}`}
             onClick={() => {
-              setFilter(lowerCasedValue as FilterType);
+              setFilter(lowerCasedValue as FilterValues);
             }}
           >
             {capitalizedValue}

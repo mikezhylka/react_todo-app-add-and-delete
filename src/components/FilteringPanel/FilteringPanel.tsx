@@ -2,7 +2,9 @@
 import React, { useEffect, useState } from 'react';
 
 import { useAppContext } from '../../context/AppContext';
+
 import { useRemoveCompletedTodos } from '../../utils/todoHandlers';
+
 import { Filter } from './Filter/Filter';
 
 export const FilteringPanel: React.FC = () => {

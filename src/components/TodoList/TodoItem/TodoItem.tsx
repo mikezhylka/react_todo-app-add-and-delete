@@ -1,8 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import classNames from 'classnames';
 import React, { useState } from 'react';
+
 import { useAppContext } from '../../../context/AppContext';
+
 import { Todo, Todo as TodoType } from '../../../types/Todo';
+
 import {
   useRemoveTodo,
   useRenameTodo,
@@ -14,9 +17,10 @@ type Props = {
 };
 
 export const TodoItem: React.FC<Props> = ({ todo }) => {
+  const { id, title, completed } = todo;
   const { loadingTodos } = useAppContext();
   const [isTodoEdited, setIsTodoEdited] = useState(false);
-  const [todoQuery, setTodoQuery] = useState(todo.title);
+  const [todoQuery, setTodoQuery] = useState(title);
 
   const renameTodo = useRenameTodo(todoQuery, setTodoQuery, setIsTodoEdited);
   const toggleTodoCompletion = useToggleTodoCompletion();
@@ -26,8 +30,8 @@ export const TodoItem: React.FC<Props> = ({ todo }) => {
     renameTodo(currentTodo, e);
   }
 
-  function handleToggleTodoCompletion(id: number) {
-    toggleTodoCompletion(id);
+  function handleToggleTodoCompletion(todoId: number) {
+    toggleTodoCompletion(todoId);
   }
 
   function handleRemove(todoId: number) {
@@ -38,20 +42,20 @@ export const TodoItem: React.FC<Props> = ({ todo }) => {
     <div
       data-cy="Todo"
       className={classNames('todo', {
-        completed: todo.completed,
+        completed: completed,
       })}
       onDoubleClick={() => setIsTodoEdited(true)}
     >
       <label
         className="todo__status-label"
         aria-label="Toggle todo status"
-        onChange={() => handleToggleTodoCompletion(todo.id)}
+        onChange={() => handleToggleTodoCompletion(id)}
       >
         <input
           data-cy="TodoStatus"
           type="checkbox"
           className="todo__status"
-          checked={todo.completed}
+          checked={completed}
         />
       </label>
 
@@ -70,7 +74,7 @@ export const TodoItem: React.FC<Props> = ({ todo }) => {
         </form>
       ) : (
         <span data-cy="TodoTitle" className="todo__title">
-          {todo.title}
+          {title}
         </span>
       )}
 
@@ -79,7 +83,7 @@ export const TodoItem: React.FC<Props> = ({ todo }) => {
           type="button"
           className="todo__remove"
           data-cy="TodoDelete"
-          onClick={() => handleRemove(todo.id)}
+          onClick={() => handleRemove(id)}
         >
           ×
         </button>
@@ -88,7 +92,7 @@ export const TodoItem: React.FC<Props> = ({ todo }) => {
       <div
         data-cy="TodoLoader"
         className={classNames('modal overlay', {
-          'is-active': loadingTodos.find(t => t?.id === todo.id),
+          'is-active': loadingTodos.find(t => t?.id === id),
         })}
       >
         <div className="modal-background has-background-white-ter" />

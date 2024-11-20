@@ -1,5 +1,6 @@
 import classNames from 'classnames';
 import React from 'react';
+
 import { useAppContext } from '../../context/AppContext';
 
 export const ErrorNotification: React.FC = () => {
@@ -9,7 +10,7 @@ export const ErrorNotification: React.FC = () => {
     setError('');
   }
 
-  setInterval(() => {
+  setTimeout(() => {
     setError('');
   }, 3000);
 
